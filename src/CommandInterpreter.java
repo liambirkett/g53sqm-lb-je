@@ -1,4 +1,15 @@
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+
+/**
+ * @author Liam
+ * 
+ * todo
+ * -implement the placeholders
+ * -make function to check if a string has dodgy characters
+ *
+ */
 public class CommandInterpreter {
 
 	
@@ -31,6 +42,12 @@ public class CommandInterpreter {
 					break;
 				case "MESG":
 					output = mesg(result);
+					break;
+				case "HAIL":
+					output = hail(result);
+					break;
+				case "QUIT":
+					output = quit();
 					break;
 		    	default:
 		    		output = "-ERR unknown command";
@@ -93,6 +110,7 @@ public class CommandInterpreter {
 	private String mesg(String[] recipientAndMessage){
 		boolean msgHasIllegalCharacters = false; //placeholder
 		boolean recipientUnameDoesntExist = false; //placeholder
+		
 		if(!ISLOGGEDIN){
 			return "BAD. You are not logged in.";
 		}else if (msgHasIllegalCharacters){
@@ -103,5 +121,34 @@ public class CommandInterpreter {
 			//send msg to user here
 			return "OK. Message sent.";
 		}	
+	}
+	
+	private String hail(String[] message){
+		boolean msgHasIllegalCharacters = false; //placeholder
+		if(!ISLOGGEDIN){
+			return "BAD. You are not logged in.";
+		}else if(msgHasIllegalCharacters){
+			return "BAD. Message has illegal characters.";
+		}else{
+		
+			//send msg to all clients here
+			return "OK. Message sent";
+		}
+	}
+	
+	private String quit(){
+		if(!ISLOGGEDIN){
+			return "BAD. You are not logged in.";
+		}else{
+			//end session, remove user from active users list.
+			return "OK. You have logged out. Thankyou, come again...";
+		}
+	}
+	
+	//returns true if the string contains any specified illegal characters
+	public boolean containsIllegal(String toExamine) {
+	    Pattern pattern = Pattern.compile("[~#@*+%{}<>\\[\\]|\"\\_^]"); //add or remove illegal characters as needed
+	    Matcher matcher = pattern.matcher(toExamine);
+	    return matcher.find();
 	}
 }
