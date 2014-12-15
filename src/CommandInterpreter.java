@@ -26,6 +26,12 @@ public class CommandInterpreter {
 				case "IDEN":
 					output = iden(result[1]);
 					break;
+				case "LIST":
+					output = list();
+					break;
+				case "MESG":
+					output = mesg(result);
+					break;
 		    	default:
 		    		output = "-ERR unknown command";
 		    		break;
@@ -73,5 +79,29 @@ public class CommandInterpreter {
 			ISLOGGEDIN = true;
 			return "OK. Welcome " + uname + ". Have a lot of fun...";
 		}
+	}
+	
+	private String list(){
+		if(ISLOGGEDIN){
+			//get list of users here
+			return "OK. Users logged in: ...";
+		}else{
+			return "BAD. You are not logged in.";
+		}
+	}
+	
+	private String mesg(String[] recipientAndMessage){
+		boolean msgHasIllegalCharacters = false; //placeholder
+		boolean recipientUnameDoesntExist = false; //placeholder
+		if(!ISLOGGEDIN){
+			return "BAD. You are not logged in.";
+		}else if (msgHasIllegalCharacters){
+			return "BAD. Message has illegal characters.";
+		}else if (recipientUnameDoesntExist){
+			return "BAD. Recipient username does not exist.";
+		}else{
+			//send msg to user here
+			return "OK. Message sent.";
+		}	
 	}
 }
