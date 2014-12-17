@@ -7,10 +7,9 @@ import java.util.regex.Pattern;
  * 
  * todo
  * -implement the placeholders
- * -make function to check if a string has dodgy characters
  *
  */
-public class CommandInterpreter {
+public class CommandInterpreter implements CommandInterpreterInterface{
 
 	
 	protected String output;
@@ -62,7 +61,7 @@ public class CommandInterpreter {
 	}
 	
 	//handles the stat command
-	private String stat(){
+	public String stat(){
 		
 		int noOfUsersLoggedIn = 0; //placeholder until functionality is there
 		String status = "OK. " + noOfUsersLoggedIn + " users logged in. You are logged ";
@@ -80,17 +79,17 @@ public class CommandInterpreter {
 		return status;
 	}
 	
-	private String iden(String uname){
+	public String iden(String uname){
 		
 		//check that username is not taken
-		boolean unameTaken = false, unameHasIllegalCharacters = false; //placeholder until functionality is there
+		boolean unameTaken = false; //placeholder until functionality is there
+		boolean unameHasIllegalCharacters = containsIllegal(uname);
 		
 		if(unameTaken){
 			return "BAD. Username already taken. Try a different one.";
 			
 		}else if(unameHasIllegalCharacters){
-			char x = '*'; //placeholder until functionality is there
-			return "BAD. Username has illegal character " + x + ". Try a different one.";
+			return "BAD. Username has illegal character. Try a different one.";
 		}else{
 			//log the user in
 			ISLOGGEDIN = true;
@@ -98,7 +97,7 @@ public class CommandInterpreter {
 		}
 	}
 	
-	private String list(){
+	public String list(){
 		if(ISLOGGEDIN){
 			//get list of users here
 			return "OK. Users logged in: ...";
@@ -107,13 +106,13 @@ public class CommandInterpreter {
 		}
 	}
 	
-	private String mesg(String[] recipientAndMessage){
-		boolean msgHasIllegalCharacters = false; //placeholder
+	public String mesg(String[] recipientAndMessage){
+		boolean hasIllegalCharacters = containsIllegal(arrayToString(recipientAndMessage));
 		boolean recipientUnameDoesntExist = false; //placeholder
 		
 		if(!ISLOGGEDIN){
 			return "BAD. You are not logged in.";
-		}else if (msgHasIllegalCharacters){
+		}else if (hasIllegalCharacters){
 			return "BAD. Message has illegal characters.";
 		}else if (recipientUnameDoesntExist){
 			return "BAD. Recipient username does not exist.";
@@ -123,8 +122,10 @@ public class CommandInterpreter {
 		}	
 	}
 	
-	private String hail(String[] message){
-		boolean msgHasIllegalCharacters = false; //placeholder
+	public String hail(String[] message){
+		
+		
+		boolean msgHasIllegalCharacters = containsIllegal(arrayToString(message));
 		if(!ISLOGGEDIN){
 			return "BAD. You are not logged in.";
 		}else if(msgHasIllegalCharacters){
@@ -136,7 +137,7 @@ public class CommandInterpreter {
 		}
 	}
 	
-	private String quit(){
+	public String quit(){
 		if(!ISLOGGEDIN){
 			return "BAD. You are not logged in.";
 		}else{
@@ -146,9 +147,18 @@ public class CommandInterpreter {
 	}
 	
 	//returns true if the string contains any specified illegal characters
-	public boolean containsIllegal(String toExamine) {
+	protected boolean containsIllegal(String toExamine) {
 	    Pattern pattern = Pattern.compile("[~#@*+%{}<>\\[\\]|\"\\_^]"); //add or remove illegal characters as needed
 	    Matcher matcher = pattern.matcher(toExamine);
 	    return matcher.find();
+	}
+	
+	//utility func, String array -> String. Concatenates all of array to one string.
+	protected String arrayToString(String[] arr){
+		StringBuffer result = new StringBuffer();
+		for (int i = 0; i < arr.length; i++) {
+		   result.append( arr[i] );
+		}
+		return result.toString();
 	}
 }

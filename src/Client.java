@@ -1,5 +1,5 @@
 
-public class Client {
+public class Client implements ClientInterface{
 	
 	//constructor
 	public Client(){

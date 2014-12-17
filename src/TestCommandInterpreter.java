@@ -30,9 +30,15 @@ public class TestCommandInterpreter extends CommandInterpreter {
 	@Test
 	public void testIDEN(){
 		
-		//iden test
+		//iden test (correct input)
 		String s = handleInput("IDEN exampleUsername");
 		assertEquals(s, "OK. Welcome exampleUsername. Have a lot of fun...");
+		
+		//iden test (illegal characters)
+		s = handleInput("IDEN exa**mlpeuname");
+		assertEquals(s, "BAD. Username has illegal character. Try a different one.");
+		
+		
 	}
 	
 	@Test
@@ -54,6 +60,10 @@ public class TestCommandInterpreter extends CommandInterpreter {
 		ISLOGGEDIN = true;
 		s = handleInput("MESG recipient1 hello");
 		assertEquals(s, "OK. Message sent.");
+		
+		//mesg test (illegal characters)
+		s = handleInput("MESG rec* hi");
+		assertEquals(s, "BAD. Message has illegal characters.");
 	}
 
 	@Test
@@ -67,6 +77,10 @@ public class TestCommandInterpreter extends CommandInterpreter {
 		ISLOGGEDIN = true;
 		s = handleInput("HAIL hello everyone!");
 		assertEquals(s, "OK. Message sent");
+		
+		//hail test (illegal characters)
+		s = handleInput("HAIL ** hi");
+		assertEquals(s, "BAD. Message has illegal characters.");
 	}
 	
 	@Test
@@ -96,5 +110,12 @@ public class TestCommandInterpreter extends CommandInterpreter {
 		//some illegal characters
 		b = containsIllegal("aj*1{d!0z(02");
 		assertTrue(b);
+		
+		//no illegal characters
+		String[] sa = {"hello", "this", "is", "a", "test"};
+		b = containsIllegal(arrayToString(sa));
+		assertFalse(b);
 	}
+	
+	
 }
