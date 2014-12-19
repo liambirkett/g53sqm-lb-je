@@ -1,3 +1,4 @@
+import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,7 +16,9 @@ public class CommandInterpreter implements CommandInterpreterInterface{
 	protected String output;
 	private String command;
 	public static boolean ISLOGGEDIN = false;
-	
+	 
+	Vector<String> uNames=new Vector<String>(10,2);
+
 	//constructor
 	public CommandInterpreter(){
 		
@@ -91,7 +94,7 @@ public class CommandInterpreter implements CommandInterpreterInterface{
 		}else if(unameHasIllegalCharacters){
 			return "BAD. Username has illegal character. Try a different one.";
 		}else{
-			//log the user in
+			uNames.add(uname);
 			ISLOGGEDIN = true;
 			return "OK. Welcome " + uname + ". Have a lot of fun...";
 		}
