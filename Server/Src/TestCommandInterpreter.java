@@ -1,9 +1,16 @@
 import static org.junit.Assert.*;
 
+import java.net.Socket;
+
 import org.junit.Test;
 
 
 public class TestCommandInterpreter extends CommandInterpreter {
+
+	public TestCommandInterpreter(Socket clientSoc) {
+		super(clientSoc);
+		// TODO Auto-generated constructor stub
+	}
 
 	@Test
 	public void testSTAT(){

@@ -15,11 +15,11 @@ public class ClientHandlerThread implements Runnable{
 
 	public ClientHandlerThread(Socket clientSocket){
 		this.clientSocket = clientSocket;
-		c = new CommandInterpreter();	
+		
 	}
 	
 	public void run(){
-		
+		c = new CommandInterpreter(clientSocket);
 		try (
 				PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
 				BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
@@ -51,5 +51,22 @@ public class ClientHandlerThread implements Runnable{
 		}
 	
 	}
+	
+	public void outputString(String output){
+		PrintWriter out;
+		try {
+			out = new PrintWriter(clientSocket.getOutputStream(), true);
+			out.println(output);
+		} catch (IOException e) {
+			System.out.println("Error no socket assigned");
+			e.printStackTrace();
+		}
+		
+	}
+	public String getClientIden(){
+		return null;
+		
+	}
+	
 
 }

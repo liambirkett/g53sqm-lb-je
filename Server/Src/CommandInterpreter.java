@@ -1,3 +1,4 @@
+import java.net.Socket;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,12 +17,12 @@ public class CommandInterpreter implements CommandInterpreterInterface{
 	protected String output;
 	private String command;
 	public static boolean ISLOGGEDIN = false;
-	 
-	Vector<String> uNames=new Vector<String>(10,2);
+	private Socket clientSoc; 
+	
 
 	//constructor
-	public CommandInterpreter(){
-		
+	public CommandInterpreter(Socket clientSoc){
+		this.clientSoc = clientSoc;
 	}
 	
 	//handle the user's commands
@@ -83,10 +84,17 @@ public class CommandInterpreter implements CommandInterpreterInterface{
 	}
 	
 	public String iden(String uname){
-		
-		//check that username is not taken
+		int i;
 		boolean unameTaken = false; //placeholder until functionality is there
 		boolean unameHasIllegalCharacters = containsIllegal(uname);
+		for(i = 0; i < ChatServer.userList.size();i++){
+			
+			if (uname == ChatServer.userList.get(i).getUname()){
+				unameTaken = true;
+			}
+			
+		}
+		
 		
 		if(unameTaken){
 			return "BAD. Username already taken. Try a different one.";
@@ -94,7 +102,13 @@ public class CommandInterpreter implements CommandInterpreterInterface{
 		}else if(unameHasIllegalCharacters){
 			return "BAD. Username has illegal character. Try a different one.";
 		}else{
-			uNames.add(uname);
+			for(i = 0; i < ChatServer.userList.size();i++){
+				if(clientSoc.equals(ChatServer.userList.get(i).getClientSoc())){
+					ChatServer.userList.get(i).setUname(uname);
+				}
+				
+				
+			}
 			ISLOGGEDIN = true;
 			return "OK. Welcome " + uname + ". Have a lot of fun...";
 		}
@@ -102,7 +116,15 @@ public class CommandInterpreter implements CommandInterpreterInterface{
 	
 	public String list(){
 		if(ISLOGGEDIN){
-			//get list of users here
+			String userListToReturn = "Ok, user connected are";
+			for(int i = 0; i < ChatServer.userList.size();i++){
+				
+				if (ChatServer.userList.get(i).getUname() != null){
+					userListToReturn = "," + userListToReturn + ChatServer.userList.get(i).getUname();
+					
+				}
+				
+			}
 			return "OK. Users logged in: ...";
 		}else{
 			return "BAD. You are not logged in.";
@@ -111,7 +133,7 @@ public class CommandInterpreter implements CommandInterpreterInterface{
 	
 	public String mesg(String[] recipientAndMessage){
 		boolean hasIllegalCharacters = containsIllegal(arrayToString(recipientAndMessage));
-		boolean recipientUnameDoesntExist = false; //placeholder
+		boolean recipientUnameDoesntExist = false; 
 		
 		if(!ISLOGGEDIN){
 			return "BAD. You are not logged in.";

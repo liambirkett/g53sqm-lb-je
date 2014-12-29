@@ -1,10 +1,12 @@
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 
 public class ChatServer {
 	
 	static final int DEFAULTPORT = 110;
 	
+	static ArrayList<ClientInfo> userList = new ArrayList<ClientInfo>();
 	@SuppressWarnings("resource")
 	public static void main(String[] args) throws IOException {
 		
@@ -29,6 +31,8 @@ public class ChatServer {
 		
 			Thread aHandleConnection = new Thread(new ClientHandlerThread(
 					clientSoc));
+			ClientInfo aClientInfo = new ClientInfo(clientSoc);
+			userList.add(aClientInfo);
 			aHandleConnection.start();
 			System.out.println("Client Connected");
 
