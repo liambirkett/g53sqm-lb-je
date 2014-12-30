@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class ChatServer {
 	
-	static final int DEFAULTPORT = 110;
+	static final int DEFAULTPORT = 1344;
 	
 	static ArrayList<ClientInfo> userList = new ArrayList<ClientInfo>();
 	@SuppressWarnings("resource")

@@ -5,15 +5,12 @@ import java.net.Socket;
 import org.junit.Test;
 
 
-public class TestClient{
+public class TestClient extends Client{
 	
-	Socket s = new Socket();
-	Client c = new Client(s);
-
 	@Test
 	public void testClientSocketIsAssigned(){ 
 		//checks client socket is assigned
-		assertNotNull(c.clientSocket);
+		//assertNotNull(clientSocket);
 	}
 
 }
