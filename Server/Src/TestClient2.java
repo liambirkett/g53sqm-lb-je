@@ -6,7 +6,7 @@ public class TestClient2 {
 
 		String hostName = "localhost";
 		
-		int portNumber = 110;
+		int portNumber = 1344;
 		
 
 		Socket clientSocket = new Socket(hostName, portNumber);
@@ -24,8 +24,13 @@ public class TestClient2 {
 		System.out.println(input.readLine());
 		output.println("IDEN jake");
 		System.out.println("Input: IDEN = " + input.readLine());
+		
 		output.println("LIST");
 		System.out.println("Input: LIST = " + input.readLine());
+		output.println("MESG Bob Hello good bye");
+		System.out.println("Input: MESG = " + input.readLine());
+		output.println("HAIL good evening");
+		System.out.println("Input: MESG = " + input.readLine());
 		output.println("QUIT");
 		System.out.println("Input: QUIT = " + input.readLine());
 		clientSocket.close();

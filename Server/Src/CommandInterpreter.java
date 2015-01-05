@@ -1,3 +1,5 @@
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Vector;
 import java.util.regex.Matcher;
@@ -18,7 +20,7 @@ public class CommandInterpreter implements CommandInterpreterInterface{
 	private String command;
 	public static boolean ISLOGGEDIN = false;
 	private Socket clientSoc; 
-	
+	private String thisName;
 
 	//constructor
 	public CommandInterpreter(Socket clientSoc){
@@ -30,9 +32,11 @@ public class CommandInterpreter implements CommandInterpreterInterface{
 		try{
 			//split up command into its constituent words
 			//first word is command
-			String[] result = input.split("\\s");
+			System.out.println(input);
+			String[] result = input.split("\\s",3);
 		    command = result[0];
 		    
+		    System.out.println(result.length);
 		    	switch(command){
 				case "STAT":
 					output = stat();
@@ -60,14 +64,16 @@ public class CommandInterpreter implements CommandInterpreterInterface{
 		    
 			return output;
 		}catch(Exception e){
+			
 			return "-ERR invalid argument";
+			
 		}
 	}
 	
 	//handles the stat command
 	public String stat(){
 		
-		int noOfUsersLoggedIn = 0; //placeholder until functionality is there
+		int noOfUsersLoggedIn = ChatServer.userList.size(); //placeholder until functionality is there
 		String status = "OK. " + noOfUsersLoggedIn + " users logged in. You are logged ";
 		
 		
@@ -89,8 +95,9 @@ public class CommandInterpreter implements CommandInterpreterInterface{
 		boolean unameHasIllegalCharacters = containsIllegal(uname);
 		for(i = 0; i < ChatServer.userList.size();i++){
 			
-			if (uname == ChatServer.userList.get(i).getUname()){
+			if (uname.equals(ChatServer.userList.get(i).getUname())){
 				unameTaken = true;
+				System.out.println(uname);
 			}
 			
 		}
@@ -109,23 +116,25 @@ public class CommandInterpreter implements CommandInterpreterInterface{
 				
 				
 			}
+			thisName = uname;
 			ISLOGGEDIN = true;
+			System.out.println(uname + " Connected");
 			return "OK. Welcome " + uname + ". Have a lot of fun...";
 		}
 	}
 	
 	public String list(){
 		if(ISLOGGEDIN){
-			String userListToReturn = "Ok, user connected are";
+			String userListToReturn = "Ok, user connected are ";
 			for(int i = 0; i < ChatServer.userList.size();i++){
 				
 				if (ChatServer.userList.get(i).getUname() != null){
-					userListToReturn = "," + userListToReturn + ChatServer.userList.get(i).getUname();
+					userListToReturn = userListToReturn + ", " +  ChatServer.userList.get(i).getUname();
 					
 				}
 				
 			}
-			return "OK. Users logged in: ...";
+			return userListToReturn;
 		}else{
 			return "BAD. You are not logged in.";
 		}
@@ -133,7 +142,13 @@ public class CommandInterpreter implements CommandInterpreterInterface{
 	
 	public String mesg(String[] recipientAndMessage){
 		boolean hasIllegalCharacters = containsIllegal(arrayToString(recipientAndMessage));
-		boolean recipientUnameDoesntExist = false; 
+		boolean recipientUnameDoesntExist = true; 
+		for(int i = 0; i < ChatServer.userList.size();i++){
+		if (recipientAndMessage[1].equals(ChatServer.userList.get(i).getUname())){
+			recipientUnameDoesntExist = false;
+			
+		}}
+		
 		
 		if(!ISLOGGEDIN){
 			return "BAD. You are not logged in.";
@@ -142,8 +157,19 @@ public class CommandInterpreter implements CommandInterpreterInterface{
 		}else if (recipientUnameDoesntExist){
 			return "BAD. Recipient username does not exist.";
 		}else{
-			//send msg to user here
-			return "OK. Message sent.";
+			for(int i = 0; i < ChatServer.userList.size();i++){
+				if (recipientAndMessage[1].equals(ChatServer.userList.get(i).getUname())){
+					Socket recipientSocket = ChatServer.userList.get(i).getClientSoc();
+					try {
+						PrintWriter out = new PrintWriter(recipientSocket.getOutputStream(), true);
+						out.println("[PM]" + thisName + "->: "  +  recipientAndMessage[2]);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+				}}
+			return "OK. Message sent to " + recipientAndMessage[1];
 		}	
 	}
 	
@@ -156,8 +182,24 @@ public class CommandInterpreter implements CommandInterpreterInterface{
 		}else if(msgHasIllegalCharacters){
 			return "BAD. Message has illegal characters.";
 		}else{
-		
-			//send msg to all clients here
+			for(int i = 0; i < ChatServer.userList.size();i++){
+				if (!ChatServer.userList.get(i).getUname().equals(null)){
+					Socket recipientSocket = ChatServer.userList.get(i).getClientSoc();
+					try {
+						PrintWriter out = new PrintWriter(recipientSocket.getOutputStream(), true);
+						if(message.length == 3){
+						out.println(thisName + "->:"  +  message[1] + " " + message[2]);}
+						else{
+							out.println(thisName + "->: "  +  message[1]);
+						}
+						
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+				}
+			}
 			return "OK. Message sent";
 		}
 	}
@@ -166,7 +208,14 @@ public class CommandInterpreter implements CommandInterpreterInterface{
 		if(!ISLOGGEDIN){
 			return "BAD. You are not logged in.";
 		}else{
-			//end session, remove user from active users list.
+			for(int i = 0; i < ChatServer.userList.size();i++){
+				
+				if (thisName.equals(ChatServer.userList.get(i).getUname())){
+					ChatServer.userList.remove(i);
+				
+				}
+				
+			}
 			return "OK. You have logged out. Thankyou, come again...";
 		}
 	}
