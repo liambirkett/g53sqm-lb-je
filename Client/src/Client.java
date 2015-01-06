@@ -3,17 +3,15 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
 import java.util.Scanner;
 	
 public class Client implements ClientInterface{
 	
 	static boolean running = true;
-	static final String hostName = "localhost";
+	static String hostName;
 	static final int portNumber = 1344;
 	static BufferedReader input;
-	static volatile boolean waitingForServerMessage=false;
-	static volatile boolean serverHasMessage = false;
+	static Socket clientSocket;
 	
 	public Client(){
 		
@@ -22,8 +20,25 @@ public class Client implements ClientInterface{
 	public static void main(String[] args) throws IOException {
 		
 		Client c = new Client();
+
+
+		System.out.println("Welcome to the chat server...");
+
+		boolean hostnameIsFine = false;
+		while(!hostnameIsFine){
+			System.out.print("Enter Server IP: ");
+			@SuppressWarnings("resource")
+			Scanner sc = new Scanner(System.in);
+			hostName = sc.nextLine();
+		}
+
+		try{
+			clientSocket = new Socket(hostName, portNumber);
+			hostnameIsFine = true;
+		}catch(Exception e){
+			System.out.println("IP address not valid, please try again.");
+		}
 		//connect to server
-		Socket clientSocket = new Socket(hostName, portNumber);
 		PrintWriter output = new PrintWriter(clientSocket.getOutputStream(),
 				true);
 		input = new BufferedReader(new InputStreamReader(
@@ -42,13 +57,10 @@ public class Client implements ClientInterface{
 
 		//program loop
 		while(running){
-			
-			//System.out.print("Enter command: ");
-			
-			
+						
 			@SuppressWarnings("resource")
-			Scanner sc = new Scanner(System.in);
-			String command = sc.nextLine(); 
+			Scanner sca = new Scanner(System.in);
+			String command = sca.nextLine(); 
 			output.println(command);
 			output.flush();
 						
