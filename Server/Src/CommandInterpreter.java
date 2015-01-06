@@ -75,9 +75,15 @@ public class CommandInterpreter implements CommandInterpreterInterface{
 		
 		int noOfUsersLoggedIn = ChatServer.userList.size(); //placeholder until functionality is there
 		String status = "OK. " + noOfUsersLoggedIn + " users logged in. You are logged ";
+		int noOfMsgsSent = 0;
 		
-		
-		int noOfMsgsSent=0; //placeholder until functionality is there
+		for(int i = 0; i < ChatServer.userList.size();i++){
+			if(clientSoc.equals(ChatServer.userList.get(i).getClientSoc())){
+			noOfMsgsSent =  ChatServer.userList.get(i).getNoOfMessages();
+			}
+			
+			
+		}
 		
 		//checks if user is logged in
 		if(ISLOGGEDIN){
@@ -169,6 +175,13 @@ public class CommandInterpreter implements CommandInterpreterInterface{
 					}
 					
 				}}
+			for(int i = 0; i < ChatServer.userList.size();i++){
+				if(clientSoc.equals(ChatServer.userList.get(i).getClientSoc())){
+					ChatServer.userList.get(i).incrementMessages();
+				}
+				
+				
+			}
 			return "OK. Message sent to " + recipientAndMessage[1];
 		}	
 	}
@@ -199,6 +212,13 @@ public class CommandInterpreter implements CommandInterpreterInterface{
 					}
 					
 				}
+			}
+			for(int i = 0; i < ChatServer.userList.size();i++){
+				if(clientSoc.equals(ChatServer.userList.get(i).getClientSoc())){
+					ChatServer.userList.get(i).incrementMessages();
+				}
+				
+				
 			}
 			return "OK. Message sent";
 		}

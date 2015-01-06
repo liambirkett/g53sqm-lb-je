@@ -30,7 +30,13 @@ public class TestClient2 {
 		output.println("MESG Bob Hello good bye");
 		System.out.println("Input: MESG = " + input.readLine());
 		output.println("HAIL good evening");
+		System.out.println(input.readLine());
 		System.out.println("Input: MESG = " + input.readLine());
+		output.println("HAIL good evening");
+		System.out.println(input.readLine());
+		System.out.println("Input: MESG = " + input.readLine());
+		output.println("STAT");
+		System.out.println("Input: STAT = " + input.readLine());
 		output.println("QUIT");
 		System.out.println("Input: QUIT = " + input.readLine());
 		clientSocket.close();

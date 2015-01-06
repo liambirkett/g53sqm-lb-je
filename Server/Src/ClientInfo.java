@@ -6,6 +6,13 @@ import javax.swing.Spring;
 public class ClientInfo {
 private String uname;
 private Socket clientSoc;
+private int noOfMessages;
+public int getNoOfMessages() {
+	return noOfMessages;
+}
+public void incrementMessages() {
+	this.noOfMessages++;
+}
 public ClientInfo(Socket clientSocket){
 	clientSoc = clientSocket;
 	uname = null;
