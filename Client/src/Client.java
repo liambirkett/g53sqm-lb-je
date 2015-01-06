@@ -30,14 +30,18 @@ public class Client implements ClientInterface{
 			@SuppressWarnings("resource")
 			Scanner sc = new Scanner(System.in);
 			hostName = sc.nextLine();
+		
+			try{
+				clientSocket = new Socket(hostName, portNumber);
+				hostnameIsFine = true;
+			}catch(Exception e){
+				System.out.println("IP address not valid, please try again.");
+			}
 		}
 
-		try{
-			clientSocket = new Socket(hostName, portNumber);
-			hostnameIsFine = true;
-		}catch(Exception e){
-			System.out.println("IP address not valid, please try again.");
-		}
+		
+		
+		
 		//connect to server
 		PrintWriter output = new PrintWriter(clientSocket.getOutputStream(),
 				true);
@@ -77,17 +81,27 @@ public class Client implements ClientInterface{
 	
 	//handles the logging in of the client
 	private static void login(PrintWriter output, BufferedReader input){
-		System.out.print("Username: ");
-		
-		@SuppressWarnings("resource")
-		Scanner sc = new Scanner(System.in);
-		String uname = sc.next();
-		output.println("IDEN " + uname);
-		try {
-			System.out.println(input.readLine());
-		} catch (IOException e) {
-			e.printStackTrace();
+		boolean usernameAccepted = false;
+		while(!usernameAccepted){
+			System.out.print("Username: ");
+			
+			@SuppressWarnings("resource")
+			Scanner sc = new Scanner(System.in);
+			String uname = sc.next();
+			output.println("IDEN " + uname);
+			try {
+				String okOrErr = input.readLine();
+				System.out.println(okOrErr);
+				String[] result = okOrErr.split("\\s",3);
+				
+				if(result[0].equals("OK.")){
+					usernameAccepted = true;
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
+		
 	}
 	
 	
