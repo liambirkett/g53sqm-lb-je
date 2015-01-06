@@ -11,14 +11,22 @@ public class Client implements ClientInterface{
 	static boolean running = true;
 	static final String hostName = "localhost";
 	static final int portNumber = 1344;
+	static BufferedReader input;
+	static volatile boolean waitingForServerMessage=false;
+	static volatile boolean serverHasMessage = false;
+	
+	public Client(){
+		
+	}
 	
 	public static void main(String[] args) throws IOException {
 		
+		Client c = new Client();
 		//connect to server
 		Socket clientSocket = new Socket(hostName, portNumber);
 		PrintWriter output = new PrintWriter(clientSocket.getOutputStream(),
 				true);
-		BufferedReader input = new BufferedReader(new InputStreamReader(
+		input = new BufferedReader(new InputStreamReader(
 				clientSocket.getInputStream())); 
 		
 	
@@ -27,15 +35,23 @@ public class Client implements ClientInterface{
 		//log user in
 		login(output, input);
 		
+		//creates a thread to listen for server msgs
+        c.new GetServerMsg().start();
+        
+        System.out.print("Enter command: ");
+
 		//program loop
 		while(running){
-			System.out.print("Enter command: ");
+			
+			//System.out.print("Enter command: ");
+			
 			
 			@SuppressWarnings("resource")
 			Scanner sc = new Scanner(System.in);
-			String command = sc.next(); 
+			String command = sc.nextLine(); 
 			output.println(command);
-			System.out.println(input.readLine());
+			output.flush();
+						
 			
 			//if command entered was QUIT
 			String s = "QUIT";
@@ -61,5 +77,38 @@ public class Client implements ClientInterface{
 			e.printStackTrace();
 		}
 	}
+	
+	
+	
+	
+	
+//thread that waits for server input and prints it
+    class GetServerMsg extends Thread {
+    	boolean msgSent;
+        public void run() {
+
+            while(true) {
+            	
+                try {
+                   	
+                	while(input.ready()){
+                		System.out.println(input.readLine());
+                		msgSent = true;
+                	}
+                	
+                	if(msgSent){
+                		System.out.print("Enter Command: ");
+                		msgSent = false;
+                	}
+                }
+                catch(IOException e) {
+                    e.printStackTrace();
+                } 
+            }
+        }
+    }
 }
+
+
+
 

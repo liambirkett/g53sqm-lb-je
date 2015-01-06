@@ -29,6 +29,7 @@ public class ClientHandlerThread implements Runnable{
 
 			output = "Connected to server!";
 			out.println(output);
+			out.flush();
 
 			while ((input = in.readLine()) != null) {
 			System.out.println(input);
